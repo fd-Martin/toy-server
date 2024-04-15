@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
 
 // middleware
@@ -28,8 +28,52 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-        //database collection
-        const toyCollection=client.db("toy").collection("toyCollection");
+        //database collection start
+        const toyCollection = client.db("toy").collection("toyCollection");
+        //database collection end.
+
+        //all toys data start----
+        app.get('/allToys', async (req, res) => {
+            const options = {
+
+                projection: {
+
+                    toy_name: 1,
+                    seller_name: 1,
+                    price: 1,
+                    quantity: 1,
+                    subcategory: 1
+                },
+            };
+
+            // const cursor = toyCollection.find(options);
+            const result = await toyCollection.find({}, options).toArray();
+            res.send(result);
+        })
+
+        //all toys data end----
+
+        //single toy data start----
+        app.get('/singleToy', async (req, res) => {
+            const options = {
+                projection: {
+                    photo_url: 1,
+                    toy_name: 1,
+                    seller_name: 1,
+                    seller_email: 1,
+                    price: 1,
+                    rating: 1,
+                    quantity: 1,
+                    description: 1,
+                },
+            };
+
+            // const cursor = toyCollection.find(options);
+            const result = await toyCollection.findOne({}, options);
+            res.send(result);
+        })
+
+        //single toy data end----
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
