@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -32,12 +32,10 @@ async function run() {
         const toyCollection = client.db("toy").collection("toyCollection");
         //database collection end.
 
-        //all toys data start----
+        // get all toys data start----
         app.get('/allToys', async (req, res) => {
             const options = {
-
                 projection: {
-
                     toy_name: 1,
                     seller_name: 1,
                     price: 1,
@@ -51,10 +49,12 @@ async function run() {
             res.send(result);
         })
 
-        //all toys data end----
+        // get all toys data end----
 
-        //single toy data start----
-        app.get('/singleToy', async (req, res) => {
+        // get single toy data start----
+        app.get('/allToys/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const query = { _id: new ObjectId(_id) }
             const options = {
                 projection: {
                     photo_url: 1,
@@ -69,11 +69,19 @@ async function run() {
             };
 
             // const cursor = toyCollection.find(options);
-            const result = await toyCollection.findOne({}, options);
+            const result = await toyCollection.findOne(query, options);
             res.send(result);
         })
 
-        //single toy data end----
+        // get single toy data end----
+
+        // post all toys data start
+        app.post('/allToys', async (req, res) => {
+            const data = req.body;
+            const result = await toyCollection.insertOne(data);
+            res.send(result);
+        })
+        // post all toys data end
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
