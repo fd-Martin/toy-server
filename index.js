@@ -37,7 +37,6 @@ async function run() {
         //---- get all toys data start----
 
         app.get('/allToys', async (req, res) => {
-            console.log(req.query.email);
             let query = {};
             if (req.query?.email) {
                 query = { seller_email: req.query.email }
@@ -71,9 +70,18 @@ async function run() {
         })
 
         // post all toys data end
+        // delete specific toy data start
+        app.delete('/allToys/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const query = { _id: new ObjectId(_id) };
+            const result = await toyCollection.deleteOne(query);
+            res.send(result);
+        })
 
+        // delete specific toy data end
 
         // Send a ping to confirm a successful connection
+
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
