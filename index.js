@@ -29,46 +29,34 @@ async function run() {
         await client.connect();
 
         //database collection start
+
         const toyCollection = client.db("toy").collection("toyCollection");
-        //database collection end.
 
-        // get all toys data start----
+        //database collection end
+
+        //---- get all toys data start----
+
         app.get('/allToys', async (req, res) => {
-            const options = {
-                projection: {
-                    toy_name: 1,
-                    seller_name: 1,
-                    price: 1,
-                    quantity: 1,
-                    subcategory: 1
-                },
-            };
-
-            // const cursor = toyCollection.find(options);
-            const result = await toyCollection.find({}, options).toArray();
+            console.log(req.query.email);
+            let query = {};
+            if (req.query?.email) {
+                query = { seller_email: req.query.email }
+            }
+            const result = await toyCollection.find(query).toArray();
             res.send(result);
         })
 
-        // get all toys data end----
+        // ----get all toys data end----
 
         // get single toy data start----
+
         app.get('/allToys/:_id', async (req, res) => {
             const _id = req.params._id;
             const query = { _id: new ObjectId(_id) }
             const options = {
-                projection: {
-                    photo_url: 1,
-                    toy_name: 1,
-                    seller_name: 1,
-                    seller_email: 1,
-                    price: 1,
-                    rating: 1,
-                    quantity: 1,
-                    description: 1,
-                },
+                projection: { photo_url: 1, toy_name: 1, seller_name: 1, seller_email: 1, price: 1, rating: 1, quantity: 1, description: 1, },
             };
 
-            // const cursor = toyCollection.find(options);
             const result = await toyCollection.findOne(query, options);
             res.send(result);
         })
@@ -81,7 +69,9 @@ async function run() {
             const result = await toyCollection.insertOne(data);
             res.send(result);
         })
+
         // post all toys data end
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
@@ -94,7 +84,6 @@ async function run() {
 run().catch(console.dir);
 
 //mongodb-end
-
 
 app.get('/', (req, res) => {
     res.send('server is running huuuuuuuuuuu')
