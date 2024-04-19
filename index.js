@@ -53,7 +53,7 @@ async function run() {
             const _id = req.params._id;
             const query = { _id: new ObjectId(_id) }
             const options = {
-                projection: { photo_url: 1, toy_name: 1, seller_name: 1, seller_email: 1, price: 1, rating: 1, quantity: 1, description: 1, },
+                projection: { photo_url: 1, toy_name: 1, seller_name: 1, seller_email: 1, price: 1, rating: 1, quantity: 1, description: 1, subcategory: 1 },
             };
 
             const result = await toyCollection.findOne(query, options);
@@ -70,7 +70,22 @@ async function run() {
         })
 
         // post all toys data end
+
+        // put specific toy data start
+
+        app.put('/allToys/:_id', async (req, res) => {
+            const _id = req.params._id;
+            const filter = { _id: new ObjectId(_id) }
+            const options = { upsert: true }
+            const updatedToyData = req.body;
+            const result = await toyCollection.updateOne(filter, { $set: updatedToyData });
+            res.send(result);
+        })
+
+        // put specific toy data end
+
         // delete specific toy data start
+
         app.delete('/allToys/:_id', async (req, res) => {
             const _id = req.params._id;
             const query = { _id: new ObjectId(_id) };
@@ -79,6 +94,7 @@ async function run() {
         })
 
         // delete specific toy data end
+
 
         // Send a ping to confirm a successful connection
 
