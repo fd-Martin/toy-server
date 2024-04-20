@@ -37,11 +37,16 @@ async function run() {
         //---- get all toys data start----
 
         app.get('/allToys', async (req, res) => {
+            const sort = req.query.sort;
             let query = {};
             if (req.query?.email) {
                 query = { seller_email: req.query.email }
             }
-            const result = await toyCollection.find(query).toArray();
+
+            const options = {
+                sort: { "price": sort === 'ascending' ? 1 : -1 }
+            }
+            const result = await toyCollection.find(query, options).toArray();
             res.send(result);
         })
 
@@ -78,6 +83,7 @@ async function run() {
             const filter = { _id: new ObjectId(_id) }
             const options = { upsert: true }
             const updatedToyData = req.body;
+
             const result = await toyCollection.updateOne(filter, { $set: updatedToyData });
             res.send(result);
         })
