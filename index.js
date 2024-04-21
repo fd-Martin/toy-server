@@ -34,14 +34,24 @@ async function run() {
 
         //database collection end
 
+        //get toys collection number start
+
+        app.get('/totalToys', async (req, res) => {
+            const result = await toyCollection.estimatedDocumentCount();
+            res.send({ totalToysNum: result });
+        });
+
+        //get toys collection number end
+
         //---- get all toys data start----
 
         app.get('/allToys', async (req, res) => {
             const sort = req.query.sort;
             const search = req.query.search;
-
+            const page = parseInt(req.query.page) || 0;
+            const limit = parseInt(req.query.limit) || 10;
+            // const limit = req.query.limit;
             let query = {}
-            // let query = { title: {$regex:search}}
             if (req.query?.email) {
                 query = { seller_email: req.query.email }
             }
@@ -51,10 +61,11 @@ async function run() {
                 }
             }
 
+            const skip = page * limit;
             const options = {
                 sort: { "price": sort === 'ascending' ? 1 : -1 }
             }
-            const result = await toyCollection.find(query, options).toArray();
+            const result = await toyCollection.find(query, options).skip(skip).limit(limit).toArray();
             res.send(result);
         })
 
