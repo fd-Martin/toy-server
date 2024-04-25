@@ -5,7 +5,6 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
-
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -43,18 +42,19 @@ async function run() {
 
         //get toys collection number end
 
-        //---- get all toys data start----
+        // ----get all toys data start----
 
         app.get('/allToys', async (req, res) => {
             const sort = req.query.sort;
             const search = req.query.search;
-            const page = parseInt(req.query.page) || 0;
-            const limit = parseInt(req.query.limit) || 10;
-            // const limit = req.query.limit;
+            const page = parseInt(req.query.page);
+            const limit = parseInt(req.query.limit);
+
             let query = {}
             if (req.query?.email) {
                 query = { seller_email: req.query.email }
             }
+
             if (req.query?.search) {
                 query = {
                     toy_name: { $regex: search, $options: 'i' }
@@ -70,6 +70,30 @@ async function run() {
         })
 
         // ----get all toys data end----
+
+        // ----get all toys data by subCategory start----
+
+        // app.get('/toysBySubcategory/:subcategory', async (req, res) => {
+        //     const subcategory = req.params.subcategory;
+        //     const query = { subcategory: subcategory };
+        //     const options = {
+        //         projection: { photo_url: 1, toy_name: 1, rating: 1, price: 1, details: 1 },
+        //     };
+
+        //     const result = await toyCollection.find(query, options).toArray();
+        //     res.send(result);
+        // })
+
+        // ----get all toys data by subCategory end----
+        // ----get all toys data by subCategory start----
+
+        app.get('/toysBySucategory', async (req, res) => {
+            const result = await toyCollection.find().toArray();
+            res.send(result);
+        })
+
+        // ----get all toys data by subCategory end----
+
 
         // get single toy data start----
 
@@ -119,7 +143,6 @@ async function run() {
         })
 
         // delete specific toy data end
-
 
         // Send a ping to confirm a successful connection
 
