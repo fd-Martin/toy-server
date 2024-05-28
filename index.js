@@ -87,7 +87,7 @@ async function run() {
         // ----get all toys data by subCategory end----
         // ----get all toys data by subCategory start----
 
-        app.get('/toysBySucategory', async (req, res) => {
+        app.get('/toysBySubcategory', async (req, res) => {
             const result = await toyCollection.find().toArray();
             res.send(result);
         })
